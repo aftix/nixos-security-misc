@@ -22,4 +22,7 @@ in {
       // lib.optionalAttrs autoEnable {
         defaultText = lib.literalMD "same as [`nixos-security-misc.autoEnable`](#nixossecuritymiscautoenable)";
       };
+
+  imports = [
+  ];
 }
