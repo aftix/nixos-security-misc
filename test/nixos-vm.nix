@@ -1,5 +1,10 @@
 {pkgs, ...}: {
-  nixos-security-misc.enable = true;
+  # Enable everything in flake
+  nixos-security-misc = {
+    enable = true;
+    thunderbird.enable = true;
+  };
+
   networking.hostName = "microvm";
   users.users.root.password = "";
 

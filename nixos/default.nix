@@ -24,5 +24,6 @@ in {
       };
 
   imports = [
+    ./thunderbird.nix
   ];
 }
