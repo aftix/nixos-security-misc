@@ -1,0 +1,11 @@
+[[commands]]
+package = "just"
+
+[[commands]]
+package = "statix"
+
+[[commands]]
+package = "alejandra"
+
+[[commands]]
+package = "nil"

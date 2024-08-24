@@ -4,6 +4,10 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
     flake-utils.url = "github:numtide/flake-utils";
+    devshell = {
+      url = "github:numtide/devshell";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     security-misc = {
       url = "github:Kicksecure/security-misc";
@@ -12,20 +16,31 @@
   };
 
   outputs = {
+    self,
     flake-utils,
     nixpkgs,
     security-misc,
     ...
-  }:
-    flake-utils.lib.eachDefaultSystem (system: let
-      pkgs = nixpkgs.legacyPackages.${system};
+  } @ inputs: let
+    linuxSystems = builtins.filter (nixpkgs.lib.strings.hasSuffix "-linux") flake-utils.lib.allSystems;
+  in
+    # Per-system output attributes
+    flake-utils.lib.eachSystem linuxSystems (system: let
+      pkgs = import nixpkgs {
+        inherit system;
+        overlays = [inputs.devshell.overlays.default];
+      };
     in {
       formatter =
-        if pkgs ? alejandra
-        then pkgs.alejandra
-        else pkgs.nix-fmt;
+        pkgs.alejandra or pkgs.nix-fmt;
+
+      devShells.default = pkgs.devshell.mkShell {
+        imports = [(pkgs.devshell.importTOML ./devshell.toml)];
+      };
     })
-    // {
+    //
+    # Output attributes without a system
+    {
       nixosModules = rec {
         nixos-security-misc = {lib, ...}: {
           _module.args = {inherit security-misc;};
