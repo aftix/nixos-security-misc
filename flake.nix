@@ -29,9 +29,7 @@
   } @ inputs: let
     linuxSystems = with flake-utils.lib.system; [
       x86_64-linux
-      i686-linux
       aarch64-linux
-      riscv64-linux
     ];
   in
     # Per-system output attributes
